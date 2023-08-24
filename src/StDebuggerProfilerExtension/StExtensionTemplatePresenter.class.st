@@ -69,7 +69,7 @@ StExtensionTemplatePresenter >> debuggerLayout [
 			yourself
 	"
 
-	^ self defaultLayout
+	^ SpBoxLayout newVertical
 ]
 
 { #category : #initialization }
