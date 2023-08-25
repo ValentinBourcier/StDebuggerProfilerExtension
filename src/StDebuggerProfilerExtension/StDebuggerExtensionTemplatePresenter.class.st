@@ -11,15 +11,15 @@ Important points:
 - On each update of the debugger call stack, a message ""updatePresenter"" is sent to all active extensions.
 "
 Class {
-	#name : #StExtensionTemplatePresenter,
+	#name : #StDebuggerExtensionTemplatePresenter,
 	#superclass : #SpPresenter,
 	#traits : 'TStDebuggerExtension',
 	#classTraits : 'TStDebuggerExtension classTrait',
-	#category : #'StDebuggerProfilerExtension-Template'
+	#category : #'StDebuggerProfilerExtension-Template-Presenters'
 }
 
-{ #category : #binding }
-StExtensionTemplatePresenter >> connectPresenters [
+{ #category : #initialization }
+StDebuggerExtensionTemplatePresenter >> connectPresenters [
 	"
 	Method to implement to bind the extension sub-components/widgets (presenters) together.
 	
@@ -32,18 +32,8 @@ StExtensionTemplatePresenter >> connectPresenters [
 	"
 ]
 
-{ #category : #accessing }
-StExtensionTemplatePresenter >> debugger [
-	"
-	This accessor provides access to the debugger UI.
-	It is inherited from the TStDebuggerTrait.
-	"
-
-	^ debugger
-]
-
 { #category : #'debugger extension' }
-StExtensionTemplatePresenter >> debuggerExtensionToolName [
+StDebuggerExtensionTemplatePresenter >> debuggerExtensionToolName [
 	"
 	The name returned here will be printed in the settings 
 	panel dedicated to debugger extensions (activation/de-activation).
@@ -52,12 +42,12 @@ StExtensionTemplatePresenter >> debuggerExtensionToolName [
 	Otherwise the settings panel cannot resolve debugger extension names, therefore it cannot be opened.
 	"
 
-	^ 'Extension template'
+	^ 'Debugger extension template'
 	"^ self explicitRequirement"
 ]
 
-{ #category : #layout }
-StExtensionTemplatePresenter >> debuggerLayout [
+{ #category : #initialization }
+StDebuggerExtensionTemplatePresenter >> debuggerLayout [
 	"
 	To override in order to place elements in the extension pane.
 	The method must return a subclass of SpExecutableLayout.
@@ -65,41 +55,52 @@ StExtensionTemplatePresenter >> debuggerLayout [
 	Example:
 	
 		^ SpBoxLayout newVertical
-			add: 'I am a label';
-			yourself
+		  		add: menuPane height: 70;
+		  		add: profilerPane;
+		  		yourself
 	"
 
 	^ SpBoxLayout newVertical
 ]
 
 { #category : #initialization }
-StExtensionTemplatePresenter >> initializePresenters [
-
+StDebuggerExtensionTemplatePresenter >> initializePresenters [
 	"
 	Method to implement to initialize the extension sub-components.
 	The method may also contain the initialization of sub-components' model entities.
 	
 	Example:
 	
-		calendarModel := CalendarModel new.
-		calendarWidget := CalendarPresenter new
-			model: calendarModel; 
-			yourself.
+		profiler := TimeProfiler new
+		            withBlockCodePane: false;
+		            withToolBar: false;
+		            yourself.
+		menuPane := StProfilerExtensionMenuPresenter new.
+		profilerPane := TimeProfilerPresenter new
+		                profiler: profiler;
+		                withoutCodeAndStatistics;
+		                yourself
 	"
+
+	
 ]
 
-{ #category : #updating }
-StExtensionTemplatePresenter >> updatePresenter [
+{ #category : #initialization }
+StDebuggerExtensionTemplatePresenter >> updatePresenter [
 	"
-	Method to implement to fetch data from the (entire) debugger and refresh the extension consequently.
+	Method to implement to fetch data from the (entire) debugger and refresh the extension accordingly.
 	Method called:
 		- At the creation of the extension UI.
 		- Whenever the debugger call stack is updated (See StDebugger >> #updateExtensionsFrom:).
-		
+	
+	To access the debugger instance, use the variable ""debugger"" or the accessor ""self debugger"" inherited from TStDebuggerExtension.
+	
 	Example:
 	
 		debugger selectedContext ifNotNil: [ 
 			""TODO: update the extension according to the selected context.""
 		].
 	"
+
+	
 ]

@@ -5,7 +5,9 @@ Class {
 		'startBlock',
 		'startButton',
 		'iterationsInput',
-		'selectedMethodLabel'
+		'selectedMethodLabel',
+		'context',
+		'withContextDescription'
 	],
 	#category : #'StDebuggerProfilerExtension-Presenters'
 }
@@ -13,36 +15,46 @@ Class {
 { #category : #accessing }
 StProfilerExtensionMenuPresenter >> context: aContext [
 
-	selectedMethodLabel text: (self contextMethodText: aContext)
+	context := aContext.
+	selectedMethodLabel text: self contextDescription
 ]
 
 { #category : #context }
-StProfilerExtensionMenuPresenter >> contextMethodText: aContext [
+StProfilerExtensionMenuPresenter >> contextDescription [
 
-	^ aContext receiver asString trimBoth
+	^ context receiver asString trimBoth
 		, ' '
-		, (Message selector: aContext selector arguments: aContext arguments) asString trimBoth
+		, (Message selector: context selector arguments: context arguments) asString trimBoth
 ]
 
 { #category : #layout }
 StProfilerExtensionMenuPresenter >> defaultLayout [
 
-	^ SpBoxLayout newVertical
-		  spacing: 5;
-		  add: 'Stack''s selected call' width: 100;
-		  add: selectedMethodLabel height: 60;
-		  add: (SpBoxLayout newHorizontal
-				   add: 'Iterations' width: 100;
-				   add: iterationsInput width: 100;
-				   hAlignStart;
-				   yourself)
-		  height: 24;
-		  add: startButton height: 34;
-		  yourself
+	| lt |
+	lt := SpBoxLayout newVertical
+		      spacing: 5;
+		      yourself.
+
+	withContextDescription ifTrue: [
+		lt
+			add: 'Stack''s selected call' width: 100;
+			add: selectedMethodLabel height: 60 ].
+	lt
+		add: (SpBoxLayout newHorizontal
+				 add: 'Iterations' width: 100;
+				 add: iterationsInput width: 100;
+				 hAlignStart;
+				 yourself)
+		height: 24;
+		add: startButton height: 34.
+
+	^ lt
 ]
 
 { #category : #initialization }
 StProfilerExtensionMenuPresenter >> initializePresenters [
+
+	withContextDescription := false.
 
 	selectedMethodLabel := self newText beNotEditable.
 
@@ -59,14 +71,20 @@ StProfilerExtensionMenuPresenter >> initializePresenters [
 		               yourself
 ]
 
-{ #category : #accessing }
-StProfilerExtensionMenuPresenter >> iterations [
-	
-	^ iterationsInput number
-]
-
-{ #category : #enumerating }
+{ #category : #hook }
 StProfilerExtensionMenuPresenter >> onProfileDo: aBlock [
 
-	startButton action: aBlock 
+	startButton action: [ aBlock cull: context cull: iterationsInput number ]
+]
+
+{ #category : #accessing }
+StProfilerExtensionMenuPresenter >> withContextDescription [
+
+	withContextDescription := true
+]
+
+{ #category : #accessing }
+StProfilerExtensionMenuPresenter >> withoutContextDescription [
+
+	withContextDescription := false
 ]

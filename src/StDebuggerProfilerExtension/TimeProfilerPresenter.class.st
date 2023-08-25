@@ -9,7 +9,8 @@ Class {
 		'report',
 		'code',
 		'blockCode',
-		'panel'
+		'panel',
+		'withCodeAndStatistics'
 	],
 	#category : #'StDebuggerProfilerExtension-TimeProfiler-Presenters'
 }
@@ -88,32 +89,43 @@ TimeProfilerPresenter >> createTreeComponent [
 	tree := self specWrapperFor: (treeMorph).
 ]
 
+{ #category : #initialization }
+TimeProfilerPresenter >> initializePresenters [
+
+	withCodeAndStatistics := true
+]
+
 { #category : #'private - gui' }
 TimeProfilerPresenter >> packComponents [
 
-	| mainLayout panedLayout |
+	| topLayout bottomLayout |
 	"Creates layouts"
-	mainLayout := SpBoxLayout newVertical.
-	panedLayout := SpPanedLayout newVertical
-		               positionOfSlider: 0.7;
-		               yourself.
+	topLayout := SpBoxLayout newVertical.
+	bottomLayout := withCodeAndStatistics
+		                ifTrue: [
+			                SpPanedLayout newVertical
+				                positionOfSlider: 0.7;
+				                yourself ]
+		                ifFalse: [ SpBoxLayout newVertical ].
 
-	"Composes main layout"
-	profiler withBlockCodePane ifTrue: [ mainLayout add: blockCode ].
-	mainLayout add: panedLayout.
+	"Composes top layout"
+	profiler withBlockCodePane ifTrue: [ topLayout add: blockCode ].
+	topLayout add: bottomLayout.
 
 	"Composes paned layout"
-	panedLayout add: (self newNotebook
-			 addPageTitle: 'Tallies Tree' provider: [ tree ];
+	bottomLayout add: (self newNotebook
+			 addPageTitle: 'Call tree' provider: [ tree ];
 			 addPageTitle: 'Full report' provider: [ report ];
 			 yourself).
-	panedLayout add: (self newNotebook
-			 addPageTitle: 'Code' provider: [ code ];
-			 addPageTitle: 'Statistics' provider: [ summary ];
-			 yourself).
+	withCodeAndStatistics ifTrue: [
+		bottomLayout add: (self newNotebook
+				 addPageTitle: 'Code' provider: [ code ];
+				 addPageTitle: 'Statistics' provider: [ summary ];
+				 yourself).
+		bottomLayout positionOfSlider: 0.7 ].
 
 	"Update the layout"
-	self layout: mainLayout
+	self layout: topLayout
 ]
 
 { #category : #api }
@@ -134,4 +146,16 @@ TimeProfilerPresenter >> refresh [
 TimeProfilerPresenter >> specWrapperFor: aMorph [
 	
 	^ self newMorph morph: aMorph; yourself
+]
+
+{ #category : #options }
+TimeProfilerPresenter >> withCodeAndStatistics [
+
+	withCodeAndStatistics := true
+]
+
+{ #category : #options }
+TimeProfilerPresenter >> withoutCodeAndStatistics [
+
+	withCodeAndStatistics := false
 ]
