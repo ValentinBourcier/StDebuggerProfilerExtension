@@ -5,8 +5,8 @@ Class {
 	#classTraits : 'TStDebuggerExtension classTrait',
 	#instVars : [
 		'profiler',
-		'profilerPane',
-		'toolbarPane'
+		'menuPane',
+		'profilerPane'
 	],
 	#category : #'StDebuggerProfilerExtension-Presenters'
 }
@@ -14,10 +14,10 @@ Class {
 { #category : #presenters }
 StProfilerExtensionPresenter >> connectPresenters [
 		
-		toolbarPane onStartDo: [
+		menuPane onStartDo: [
 			self
 				profileMethodFrom: debugger selectedContext
-				iterations: toolbarPane iterations.
+				iterations: menuPane iterations.
 			profilerPane refresh
 		]
 	
@@ -34,7 +34,7 @@ StProfilerExtensionPresenter >> debuggerExtensionToolName [
 StProfilerExtensionPresenter >> debuggerLayout [
 	
 		^ SpBoxLayout newVertical
-			  add: toolbarPane height: 160;
+			  add: menuPane height: 160;
 			  add: profilerPane;
 			  yourself
 	
@@ -49,7 +49,7 @@ StProfilerExtensionPresenter >> initializePresenters [
 		            withToolBar: false;
 		            yourself.
 		"Widgets"
-		toolbarPane := StProfilerExtensionMenuPresenter new.
+		menuPane := StProfilerExtensionMenuPresenter new.
 		profilerPane := TimeProfilerPresenter new
 		                profiler: profiler;
 		                yourself
@@ -81,7 +81,7 @@ StProfilerExtensionPresenter >> runMethodFromContext: aContext [
 StProfilerExtensionPresenter >> updatePresenter [
 	
 		debugger selectedContext ifNotNil: [
-			toolbarPane context: debugger selectedContext.
+			menuPane context: debugger selectedContext.
 			profiler reset.
 			profilerPane refresh
 		]
