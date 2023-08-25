@@ -14,7 +14,7 @@ Class {
 { #category : #presenters }
 StProfilerExtensionPresenter >> connectPresenters [
 		
-		menuPane onStartDo: [
+		menuPane onProfileDo: [
 			self
 				profileMethodFrom: debugger selectedContext
 				iterations: menuPane iterations.

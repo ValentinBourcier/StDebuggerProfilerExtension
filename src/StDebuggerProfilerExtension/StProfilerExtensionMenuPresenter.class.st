@@ -19,9 +19,9 @@ StProfilerExtensionMenuPresenter >> context: aContext [
 { #category : #context }
 StProfilerExtensionMenuPresenter >> contextMethodText: aContext [
 
-	^ aContext receiver asString 
+	^ aContext receiver asString trimBoth
 		, ' '
-		, (Message selector: aContext selector arguments: aContext arguments) asString
+		, (Message selector: aContext selector arguments: aContext arguments) asString trimBoth
 ]
 
 { #category : #layout }
@@ -66,7 +66,7 @@ StProfilerExtensionMenuPresenter >> iterations [
 ]
 
 { #category : #enumerating }
-StProfilerExtensionMenuPresenter >> onStartDo: aBlock [
+StProfilerExtensionMenuPresenter >> onProfileDo: aBlock [
 
 	startButton action: aBlock 
 ]
