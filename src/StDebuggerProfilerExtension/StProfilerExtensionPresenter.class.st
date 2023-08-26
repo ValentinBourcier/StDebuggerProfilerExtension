@@ -4,7 +4,7 @@ Class {
 	#traits : 'TStDebuggerExtension',
 	#classTraits : 'TStDebuggerExtension classTrait',
 	#instVars : [
-		'profiler',
+		'profilerModel',
 		'menuPane',
 		'profilerPane'
 	],
@@ -15,7 +15,7 @@ Class {
 StProfilerExtensionPresenter >> connectPresenters [
 
 	menuPane onProfileDo: [ :context :iterations |
-		profiler profileCallFrom: context iterations: iterations.
+		profilerModel runFromContext: context iterations: iterations.
 		profilerPane refresh ]
 ]
 
@@ -37,16 +37,16 @@ StProfilerExtensionPresenter >> debuggerLayout [
 { #category : #presenters }
 StProfilerExtensionPresenter >> initializePresenters [
 
-	"Configuration"
-	profiler := TimeProfiler new
+	"Model"
+	profilerModel := TimeProfiler new
 		            withBlockCodePane: false;
 		            withToolBar: false;
 		            yourself.
 	"Widgets"
 	menuPane := StProfilerExtensionMenuPresenter new.
 	profilerPane := TimeProfilerPresenter new
-		                profiler: profiler;
 		                withoutCodeAndStatistics;
+		                profiler: profilerModel;
 		                yourself
 ]
 
@@ -55,6 +55,6 @@ StProfilerExtensionPresenter >> updatePresenter [
 
 	debugger selectedContext ifNotNil: [
 		menuPane context: debugger selectedContext.
-		profiler reset.
+		profilerModel reset.
 		profilerPane refresh ]
 ]
