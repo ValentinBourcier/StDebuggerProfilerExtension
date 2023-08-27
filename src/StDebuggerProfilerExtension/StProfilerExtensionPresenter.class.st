@@ -6,7 +6,7 @@ Class {
 	#instVars : [
 		'profilerModel',
 		'menuPane',
-		'profilerPane'
+		'profilerResultsPane'
 	],
 	#category : #'StDebuggerProfilerExtension-Presenters'
 }
@@ -16,7 +16,7 @@ StProfilerExtensionPresenter >> connectPresenters [
 
 	menuPane onProfileDo: [ :context :iterations |
 		profilerModel runFromContext: context iterations: iterations.
-		profilerPane refresh ]
+		profilerResultsPane refresh ]
 ]
 
 { #category : #'debugger extension' }
@@ -30,7 +30,7 @@ StProfilerExtensionPresenter >> debuggerLayout [
 
 	^ SpBoxLayout newVertical
 		  add: menuPane height: 70;
-		  add: profilerPane;
+		  add: profilerResultsPane;
 		  yourself
 ]
 
@@ -39,15 +39,15 @@ StProfilerExtensionPresenter >> initializePresenters [
 
 	"Model"
 	profilerModel := TimeProfiler new
-		            withBlockCodePane: false;
-		            withToolBar: false;
-		            yourself.
+		                 withBlockCodePane: false;
+		                 withToolBar: false;
+		                 yourself.
 	"Widgets"
 	menuPane := StProfilerExtensionMenuPresenter new.
-	profilerPane := TimeProfilerPresenter new
-		                withoutCodeAndStatistics;
-		                profiler: profilerModel;
-		                yourself
+	profilerResultsPane := TimeProfilerPresenter new
+		                       withoutCodeAndStatistics;
+		                       profiler: profilerModel;
+		                       yourself
 ]
 
 { #category : #presenters }
@@ -56,5 +56,5 @@ StProfilerExtensionPresenter >> updatePresenter [
 	debugger selectedContext ifNotNil: [
 		menuPane context: debugger selectedContext.
 		profilerModel reset.
-		profilerPane refresh ]
+		profilerResultsPane refresh ]
 ]

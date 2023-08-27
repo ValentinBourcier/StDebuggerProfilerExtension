@@ -56,7 +56,7 @@ StDebuggerExtensionTemplatePresenter >> debuggerLayout [
 	
 		^ SpBoxLayout newVertical
 		  		add: menuPane height: 70;
-		  		add: profilerPane;
+		  		add: profilerResultsPane;
 		  		yourself
 	"
 
@@ -76,7 +76,7 @@ StDebuggerExtensionTemplatePresenter >> initializePresenters [
 		            withToolBar: false;
 		            yourself.
 		menuPane := StProfilerExtensionMenuPresenter new.
-		profilerPane := TimeProfilerPresenter new
+		profilerResultsPane := TimeProfilerPresenter new
 				          withoutCodeAndStatistics;
 		                profiler: profilerModel;
 		                yourself
